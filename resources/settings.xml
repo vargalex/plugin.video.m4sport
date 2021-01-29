@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+	<setting id="quality" type="bool" label="Video minőség automatikus kiválasztása" default="true"/>
+</settings>
