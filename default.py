@@ -3,7 +3,7 @@ import xbmcaddon,os,xbmcgui,urllib,re,xbmcplugin,json,urlparse
 from resources.lib import client
 
 
-m4_url = 'http://www.m4sport.hu'
+m4_url = 'https://www.m4sport.hu'
 syshandle = int(sys.argv[1])
 
 def root():
@@ -29,6 +29,7 @@ def root():
     [i.update({'action': 'getEpisodes', 'page': '1', 'IsFolder': 'true'}) for i in categories]
     for i in categories:
         addDir(i)
+    xbmcplugin.endOfDirectory(syshandle)
 
 
 def getEpisodes():
@@ -36,7 +37,7 @@ def getEpisodes():
     r = client.request(query)
     result = json.loads(r)
     for i in result:
-        if i['has_video'] != True: Continue
+        #if i['has_video'] != True: continue
         title = client.replaceHTMLCodes(i['title'])
         title = title.encode('utf-8')
         link = i['link'].encode('utf-8')
@@ -46,6 +47,7 @@ def getEpisodes():
         addDir({'title': title, 'url': link, 'action': 'getVideo', 'image': img, 'isFolder': 'false'})
     if len(result) >= 10:
         addDir({'title': '[COLOR green]Következő oldal[/COLOR]', 'action': 'getEpisodes', 'page': str(int(page) + 1), 'category': category, 'isFolder': 'true'})
+    xbmcplugin.endOfDirectory(syshandle)
 
 
 def getLive():
@@ -64,12 +66,16 @@ def getLive():
 def getVideo():
     r = client.request(url)
     token = re.search('[\'"]token[\'"]\s*:\s*[\'"]([^\'"]+)', r).group(1)
-    m = client.request('http://player.mediaklikk.hu/player/player-external-vod-full.php?token=' + token)
+    m = client.request('http://player.mediaklikk.hu/playernew/player.php?video=' + token)
     link = re.search('"file"\s*:\s*"([^"]+)', m).group(1)
     link = link.replace('\\', '')
+    if (not link.startswith("http:") or not link.startswith("https:")):
+        link = "%s%s" % ("https:", link)
     stream = get_Stream(link)
     if stream:
         resolve(stream, image, title)
+    else:
+        return
 
 
 def get_Stream(url):
@@ -101,6 +107,8 @@ def get_Stream(url):
     q = dialog.select('Minőség', qualities)
     if q <= len(qualities) and not q == -1:
         return(urls[q])
+    else:
+        return None
 
 
 def resolve(url, icon, title):   
@@ -169,4 +177,3 @@ elif action=='getVideo':
 elif action=='getLive':
     getLive()
 
-xbmcplugin.endOfDirectory(syshandle)
