@@ -71,7 +71,10 @@ skinPath = xbmc.translatePath('special://skin/')
 
 addonPath = xbmc.translatePath(addonInfo('path'))
 
-dataPath = xbmc.translatePath(addonInfo('profile')).decode('utf-8')
+try:
+    dataPath = xbmc.translatePath(addonInfo('profile')).decode('utf-8')
+except:
+    dataPath = xbmc.translatePath(addonInfo('profile'))
 
 playlistFile = os.path.join(dataPath, 'playlist.db')
 
@@ -87,8 +90,8 @@ def addonIcon():
     except: pass
 
 
-def addonFanart():
-    try: return os.path.join(addonInfo('path'), 'fanart.jpg')
+def artPath():
+    try: return os.path.join(addonInfo('path'), 'resources', 'media')
     except: pass
 
 
@@ -137,6 +140,10 @@ def refresh():
 
 def idle():
     return execute('Dialog.Close(busydialog)')
+
+
+def busy():
+    return execute('ActivateWindow(busydialog)')
 
 
 def queueItem():

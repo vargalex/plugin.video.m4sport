@@ -106,7 +106,7 @@ def clear(table=None):
         if table == None: table = ['rel_list', 'rel_lib']
         elif not type(table) == list: table = [table]
 
-        yes = control.yesnoDialog('Biztos benne?', '', '')
+        yes = control.yesnoDialog('Gyorsítótár törlése', 'Biztos benne?', '')
         if not yes: return
 
         dbcon = database.connect(control.cacheFile)

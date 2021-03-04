@@ -1,7 +1,16 @@
 # -*- coding: utf-8 -*-
-import xbmcaddon,os,xbmcgui,urllib,re,xbmcplugin,json,urlparse
+import xbmcaddon,os,xbmcgui,re,xbmcplugin,json
 from resources.lib import client
+from resources.lib.modules.utils import py2_encode
 
+if sys.version_info[0] == 3:
+    import urllib.parse as urlparse
+    from urllib.parse import quote_plus
+    from urllib.parse import parse_qsl
+else:
+    import urlparse
+    from urllib import quote_plus
+    from urlparse import parse_qsl
 
 m4_url = 'https://www.m4sport.hu'
 syshandle = int(sys.argv[1])
@@ -39,10 +48,10 @@ def getEpisodes():
     for i in result:
         #if i['has_video'] != True: continue
         title = client.replaceHTMLCodes(i['title'])
-        title = title.encode('utf-8')
-        link = i['link'].encode('utf-8')
+        title = py2_encode(title)
+        link = py2_encode(i['link'])
         if link.startswith('//'): link = 'http:' + link
-        img = i['image'].encode('utf-8')
+        img = py2_encode(i['image'])
         if img.startswith('//'): img = 'http:' + img
         addDir({'title': title, 'url': link, 'action': 'getVideo', 'image': img, 'isFolder': 'false'})
     if len(result) >= 10:
@@ -56,7 +65,7 @@ def getLive():
     r = client.request(embeddedUrl)
     playlist = re.search('''['"]playlist['"]\s*:\s*(\[[^\]]+\])''', r).group(1)
     playlist = json.loads(playlist)
-    link = playlist[0]['file'].encode('utf-8')
+    link = py2_encode(playlist[0]['file'])
     if link.startswith('//'): link = 'http:' + link
     stream = get_Stream(link)
     if stream:
@@ -130,18 +139,18 @@ def addDir(item):
     isFolder = False if 'isFolder' in item and not item['isFolder'] == 'true' else True
     url = '%s?action=%s' % (sys.argv[0], item['action'])
     try:
-        url += '&title=%s' % urllib.quote_plus(item['title'])
+        url += '&title=%s' % quote_plus(item['title'])
     except KeyError:
-        url += '&title=%s' % urllib.quote_plus(item['title'].encode('utf-8'))
-    try: url += '&url=%s' % urllib.quote_plus(item['url'])
+        url += '&title=%s' % quote_plus(py2_encode(item['title']))
+    try: url += '&url=%s' % quote_plus(item['url'])
     except: pass
-    try: url += '&image=%s' % urllib.quote_plus(item['image'])
+    try: url += '&image=%s' % quote_plus(item['image'])
     except:pass
-    try: url += '&category=%s' % urllib.quote_plus(item['category'])
+    try: url += '&category=%s' % quote_plus(item['category'])
     except: pass
-    try: url += '&page=%s' % urllib.quote_plus(item['page'])
+    try: url += '&page=%s' % quote_plus(item['page'])
     except: pass
-    try: url += '&streamid=%s' % urllib.quote_plus(item['streamid'])
+    try: url += '&streamid=%s' % quote_plus(item['streamid'])
     except: pass
 
     liz=xbmcgui.ListItem(label=label)
@@ -152,7 +161,7 @@ def addDir(item):
     xbmcplugin.addDirectoryItem(handle=syshandle, url=url, listitem=liz, isFolder=isFolder)
 
 
-params = dict(urlparse.parse_qsl(sys.argv[2].replace('?','')))
+params = dict(parse_qsl(sys.argv[2].replace('?','')))
 
 url = params.get("url")
 

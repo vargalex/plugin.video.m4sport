@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.m4sport" name="M4 Sport" version="1.0.9" provider-name="[COLOR orange]onepunchman[/COLOR]">
+<addon id="plugin.video.m4sport" name="M4 Sport" version="1.0.10" provider-name="[COLOR orange]onepunchman[/COLOR]">
 	<requires>
-		<import addon="xbmc.python" version="2.1.0"/>
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="default.py">
 		<provides>video</provides>
