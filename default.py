@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import xbmcaddon,os,xbmcgui,re,xbmcplugin,json
 from resources.lib import client
-from resources.lib.modules.utils import py2_encode
+from resources.lib.utils import py2_encode
 
 if sys.version_info[0] == 3:
     import urllib.parse as urlparse

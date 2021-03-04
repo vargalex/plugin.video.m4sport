@@ -10,7 +10,10 @@
 		<language>hu</language>
 		<description lang="en"></description>
 		<platform>all</platform>
-		<news>V1.0.9 (2021.01.29)
-- Forrás változás követése</news>
+		<news>V1.0.10 (2021.03.04)
+- Matrix kompatibilitás</news>
+		<assets>
+			<icon>icon.png</icon>
+		</assets>
 	</extension>
 </addon>
