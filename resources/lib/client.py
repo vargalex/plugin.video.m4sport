@@ -22,7 +22,7 @@ def request(url, close=True, error=False, proxy=None, post=None, headers=None, m
             opener = urllib2.build_opener(*handlers)
             opener = urllib2.install_opener(opener)
         if output == 'cookie' or output == 'extended' or not close == True:
-            if sys.version.info[0] == 3:
+            if sys.version_info[0] == 3:
                 import http.cookiejar as cookielib
             else:
                 import cookielib
@@ -57,7 +57,7 @@ def request(url, close=True, error=False, proxy=None, post=None, headers=None, m
         else:
             headers['Referer'] = referer
         if not 'Accept-Language' in headers:
-            headers['Accept-Language'] = 'en-US'
+            headers['Accept-Language'] = 'hu-HU,hu;q=0.8,en-US;q=0.6,en;q=0.4,de;q=0.2'
         if 'Cookie' in headers:
             pass
         elif not cookie == None:
@@ -107,7 +107,10 @@ def request(url, close=True, error=False, proxy=None, post=None, headers=None, m
         if close == True:
             response.close()
 
-        return result.decode('utf-8')
+        if (sys.version_info[0] == 3 and not isinstance(result, str)):
+            return result.decode('utf-8')
+        else:
+            return result
     except:
         return
 
@@ -226,7 +229,7 @@ def replaceHTMLCodes(txt):
     if sys.version_info[0] == 3:
         txt = html.unescape(txt)
     else:
-        txt = HTMLParser().unescape(txt)
+        txt = HTMLParser.HTMLParser().unescape(txt)
     txt = txt.replace("&quot;", "\"")
     txt = txt.replace("&amp;", "&")
     return txt

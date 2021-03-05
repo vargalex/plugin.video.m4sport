@@ -1,3 +1,6 @@
+1.0.12
+- bugfix
+
 1.0.10
 - Matrix kompatibilitás
 
