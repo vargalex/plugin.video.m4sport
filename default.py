@@ -65,12 +65,18 @@ def getLive():
     r = client.request(embeddedUrl)
     playlist = re.search('''['"]playlist['"]\s*:\s*(\[[^\]]+\])''', r).group(1)
     playlist = json.loads(playlist)
-    link = py2_encode(playlist[0]['file'])
-    if link.startswith('//'): link = 'http:' + link
-    stream = get_Stream(link)
-    if stream:
-        resolve(stream, image, title)
-
+    link = None
+    for item in playlist:
+        if "index.m3u8" in item['file']:
+            link = py2_encode(item['file'])
+            break
+    if link != None:
+        if link.startswith('//'): link = 'http:' + link
+        stream = get_Stream(link)
+        if stream:
+            resolve(stream, image, title)
+    else:
+        xbmcgui.Dialog().ok("Hiba", "Stream nem található!")
 
 def getVideo():
     r = client.request(url)
