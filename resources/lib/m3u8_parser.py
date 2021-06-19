@@ -7,7 +7,9 @@
 import datetime
 import itertools
 import re
-from itertools import izip
+import sys
+if sys.version_info[0] != 3:
+    from itertools import izip as zip
 
 ATTRIBUTELISTPATTERN = re.compile(r'''((?:[^,"']|"[^"]*"|'[^']*')+)''')
 
@@ -136,7 +138,7 @@ def string_to_lines(string):
 
 
 def remove_quotes_parser(*attrs):
-    return dict(list(izip(attrs, itertools.repeat(remove_quotes))))
+    return dict(list(zip(attrs, itertools.repeat(remove_quotes))))
 
 
 def remove_quotes(string):
