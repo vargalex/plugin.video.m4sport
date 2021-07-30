@@ -22,6 +22,11 @@ def root():
     addDir({'title': '[COLOR orange]' + u'M4 id\u0151szakos stream 3' +'[/COLOR]', 'action': 'getLive', 'streamid': 'extra3', 'isFolder': 'false'})
     addDir({'title': '[COLOR orange]' + u'M4 id\u0151szakos stream 4' +'[/COLOR]', 'action': 'getLive', 'streamid': 'extra4', 'isFolder': 'false'})
     addDir({'title': '[COLOR orange]' + u'M4 id\u0151szakos stream 5' +'[/COLOR]', 'action': 'getLive', 'streamid': 'extra5', 'isFolder': 'false'})
+    addDir({'title': '[COLOR orange]' + u'M4 Sport 1' +'[/COLOR]', 'action': 'getLive', 'streamid': 'm4sport1', 'isFolder': 'false'})
+    addDir({'title': '[COLOR orange]' + u'M4 Sport 2' +'[/COLOR]', 'action': 'getLive', 'streamid': 'm4sport2', 'isFolder': 'false'})
+    addDir({'title': '[COLOR orange]' + u'M4 Sport 3' +'[/COLOR]', 'action': 'getLive', 'streamid': 'm4sport3', 'isFolder': 'false'})
+    addDir({'title': '[COLOR orange]' + u'M4 Sport 4' +'[/COLOR]', 'action': 'getLive', 'streamid': 'm4sport4', 'isFolder': 'false'})
+    addDir({'title': '[COLOR orange]' + u'M4 Sport 5' +'[/COLOR]', 'action': 'getLive', 'streamid': 'm4sport5', 'isFolder': 'false'})
 
     categories = [ {'category': '1020', 
                    'title': u'Sporth\u00EDrek'},
