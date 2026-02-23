@@ -72,7 +72,7 @@ def is_dirty(candidate):
     return True
 
 def get_depth(candidate):
-    parsed = urlparse(candidate)
+    parsed = urlparse.urlparse(candidate)
     path_segments = [segment for segment in parsed.path.split('/') if segment]
 
     return len(path_segments)
