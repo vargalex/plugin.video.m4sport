@@ -93,7 +93,7 @@ def getLive():
     playlist = json.loads(playlist.group(1))
     url_list = []
     for link_obj in playlist:
-        url_str = link_obj.get('file')
+        url_str = link_obj.get('file', '')
         if '.m3u' in url_str:
             url_list.append(url_str) # sanitization; only introduce URLs that contain a stream link in the first place
 
