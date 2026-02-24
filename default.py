@@ -65,11 +65,7 @@ def getEpisodes():
 
 def is_dirty(candidate):
     blocklist = ['bumper', 'promo', 'advertisement', 'reklam']
-
-    for word in blocklist:
-        if word in candidate:
-            return False
-    return True
+    return any(word in candidate for word in blocklist)
 
 def get_depth(candidate):
     parsed = urlparse.urlparse(candidate)
