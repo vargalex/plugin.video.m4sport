@@ -63,25 +63,69 @@ def getEpisodes():
         addDir({'title': '[COLOR green]Következő oldal[/COLOR]', 'action': 'getEpisodes', 'page': str(int(page) + 1), 'category': category, 'isFolder': 'true'})
     xbmcplugin.endOfDirectory(syshandle)
 
+def is_dirty(candidate):
+    blocklist = ['bumper', 'promo', 'advertisement', 'reklam']
+    return any(word in candidate for word in blocklist)
+
+def get_depth(candidate):
+    parsed = urlparse.urlparse(candidate)
+    path_segments = [segment for segment in parsed.path.split('/') if segment]
+
+    return len(path_segments)
+
 
 def getLive():
     content_id = streamid
-    embeddedUrl = 'https://player.mediaklikk.hu/playernew/player.php?video={0}&noflash=yes&osfamily=Android&osversion=7.0&browsername=Chrome%20Mobile&browserversion=&title=&contentid={0}&embedded=1'.format(content_id)
+    embeddedUrl = 'https://player.mediaklikk.hu/playernew/player.php?video={0}&noflash=yes&osfamily=Android&osversion=7.0&browsername=Chrome%20Mobile&browserversion=&title=&contentid={0}&embedded=1'.format(
+        content_id)
     r = client.request(embeddedUrl)
-    playlist = re.search('''['"]playlist['"]\s*:\s*(\[[^\]]+\])''', r).group(1)
-    playlist = json.loads(playlist)
-    link = None
-    for item in playlist:
-        if "index.m3u8" in item['file']:
-            link = py2_encode(item['file'])
-            break
-    if link != None:
-        if link.startswith('//'): link = 'http:' + link
-        stream = get_Stream(link)
-        if stream:
-            resolve(stream, image, title)
-    else:
-        xbmcgui.Dialog().ok("Hiba", "Stream nem található!")
+
+    playlist = re.search('''['"]playlist['"]\s*:\s*(\[[^\]]+\])''', r)
+    if playlist is None:
+        ok = xbmcgui.Dialog().ok('Stream hiba',
+                                 'A stream URL nem található. A válasz struktúra változhatott...')
+        return  # fatal error
+
+    playlist = json.loads(playlist.group(1))
+    url_list = []
+    for link_obj in playlist:
+        url_str = link_obj.get('file', '')
+        if '.m3u' in url_str:
+            url_list.append(url_str) # sanitization; only introduce URLs that contain a stream link in the first place
+
+    if len(url_list) == 0:
+        raise ValueError("Nem találtunk stream URL-t!")
+
+    link = None  # start with an invalid link
+
+    # Primary structural check
+    for link_candidate in url_list:
+        if get_depth(link_candidate) > 4: continue  # skip if invalid url (typically banner streams like the one during
+        # Olympic Games, have more slash separated segments. Valid URLS typically have 4 unless something changes
+        link = link_candidate
+        break  # always pick the first valid URL as they tend to be the first ones in the list (in play order)
+
+    # if the aggressive filter yielded zero results, fall back to the word blocklist method
+    if link is None:
+        for link_candidate in url_list:
+            if is_dirty(link_candidate): continue
+            link = link_candidate
+            break  # pick first valid
+
+    # If none of these filters yielded any result then fall back to the first url and notify user
+    if link is None:
+        link = url_list[0]
+        xbmcgui.Dialog().notification(
+            'Stream figyelmeztetés',
+            'Az URL filterek nem adtak eredményt, a legelső URL fog lejátszódni...',
+            xbmcgui.NOTIFICATION_WARNING
+        )
+
+    if link.startswith('//'): link = 'http:' + link
+    link = py2_encode(link)
+    stream = get_Stream(link)
+    if stream:
+        resolve(stream, image, title)
 
 def getVideo():
     r = client.request(url)
